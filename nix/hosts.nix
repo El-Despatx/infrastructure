@@ -4,6 +4,7 @@
     nixosConfigurations = {
       rebost = inputs.nixpkgs.lib.nixosSystem {
         specialArgs = {
+          user = "pofnet";
           inherit inputs;
         };
         system = "x86_64-linux";
