@@ -77,7 +77,6 @@
                 };
                 "/boot" = {
                   mountOptions = [
-                    "subvol=boot"
                     "noatime"
                   ];
                   mountpoint = "/boot";

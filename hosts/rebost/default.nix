@@ -4,21 +4,15 @@
     ./hardware-configuration.nix
     ./disko.nix
     ./impermanence.nix
-    ../../modules/ssh.nix
+    ../../modules/backups.nix
+    ../../modules/openssh.nix
+    ../../modules/tailscale.nix
   ];
   boot.loader.grub.enable = true;
   system.stateVersion = "25.05";
   nix.extraOptions = ''
     experimental-features = nix-command flakes
   '';
-
-  services.tailscale = {
-    enable = true;
-    useRoutingFeatures = "server";
-    extraSetFlags = [
-      "--advertise-exit-node"
-    ];
-  };
 
   networking.hostName = "rebost";
 
@@ -37,10 +31,12 @@
     mutableUsers = false;
     users = {
       root = {
-        password = "nixos";
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDO11F5Mw0JYYi/IgmgfV7bRZS7yDi5y/FSDpM3Ep6Qt openpgp:0xBC69F42C" # ferran
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII2SPPa9ZAtAGTuprKx2vKL+PK1aPm/LPveJXBYNOXUF oriolagobat@lift" # ori
+        ];
       };
       ${user} = {
-        password = "changeme1234";
         isNormalUser = true;
         extraGroups = [
           "networkmanager"
