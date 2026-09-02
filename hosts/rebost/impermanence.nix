@@ -51,6 +51,11 @@
       "/var/lib/bluetooth"
       "/var/lib/nixos"
       "/var/lib/systemd/coredump"
+      "/home/pofnet/projects"
+      "/home/pofnet/data"
+      "/root/.ssh"
+      "/home/pofnet/.ssh"
+      "/var/lib/tailscale"
       "/etc/NetworkManager/system-connections"
     ];
     files = [

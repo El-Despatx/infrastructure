@@ -2,7 +2,7 @@
   disko.devices = {
     disk.hdd = {
       type = "disk";
-      device = "/dev/sdb";
+      device = "/dev/disk/by-id/wwn-0x600508b1001cebd3cb9241b484b91f97";
       content = {
         type = "gpt";
         partitions = {
@@ -31,7 +31,7 @@
 
     disk.data = {
       type = "disk";
-      device = "/dev/sda";
+      device = "/dev/disk/by-id/wwn-0x600508b1001c8defb80b6bf96bc5781f";
       content = {
         type = "gpt";
         partitions = {
@@ -40,6 +40,8 @@
             content = {
               type = "filesystem";
               format = "ext4";
+              mountpoint = "/data";
+              mountOptions = [ "noatime" ];
             };
           };
         };
@@ -60,12 +62,25 @@
                   mountpoint = "/";
                 };
                 "/persist" = {
-                  mountOptions = [ "subvol=persist" "noatime" ];
+                  mountOptions = [
+                    "subvol=persist"
+                    "noatime"
+                  ];
                   mountpoint = "/persist";
                 };
                 "/nix" = {
-                  mountOptions = [ "subvol=nix" "noatime" ];
+                  mountOptions = [
+                    "subvol=nix"
+                    "noatime"
+                  ];
                   mountpoint = "/nix";
+                };
+                "/boot" = {
+                  mountOptions = [
+                    "subvol=boot"
+                    "noatime"
+                  ];
+                  mountpoint = "/boot";
                 };
               };
             };

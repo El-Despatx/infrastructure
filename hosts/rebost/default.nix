@@ -12,6 +12,15 @@
     experimental-features = nix-command flakes
   '';
 
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+    extraSetFlags = [
+      "--advertise-exit-node"
+    ];
+  };
+
+  networking.hostName = "rebost";
 
   programs = {
     zsh.enable = true;
@@ -33,7 +42,10 @@
       ${user} = {
         password = "changeme1234";
         isNormalUser = true;
-        extraGroups = [ "networkmanager" "wheel" ];
+        extraGroups = [
+          "networkmanager"
+          "wheel"
+        ];
       };
     };
   };
