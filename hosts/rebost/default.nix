@@ -18,6 +18,19 @@
 
   networking.hostName = "rebost";
 
+    environment.systemPackages = with pkgs; [
+    wget
+    curl
+    neovim
+    dua
+    git
+    gnumake
+    htop
+    file
+    zip
+    unzip
+  ];
+
   programs = {
     zsh.enable = true;
     direnv = {
