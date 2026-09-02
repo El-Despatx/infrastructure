@@ -4,7 +4,10 @@
     inputs.impermanence.nixosModules.impermanence
   ];
 
-  boot.initrd.postDeviceCommands = lib.mkAfter ''
+  # Keep the scripted initrd for the current Btrfs rollback hook on NixOS 26.05.
+  boot.initrd.systemd.enable = false;
+
+  boot.initrd.postResumeCommands = lib.mkAfter ''
     mkdir /btrfs_tmp
     mount /dev/root_vg/root /btrfs_tmp
     if [[ -e /btrfs_tmp/root ]]; then
@@ -28,12 +31,6 @@
     btrfs subvolume create /btrfs_tmp/root
     umount /btrfs_tmp
   '';
-
-  # Fix agenix ssh key being not mounted when agenix was running
-  fileSystems."/etc/nixos" = {
-    depends = [ "/persist" ];
-    neededForBoot = true;
-  };
 
   # Issue: https://github.com/nix-community/impermanence/issues/229
   # Can't use bind with machine-id...
