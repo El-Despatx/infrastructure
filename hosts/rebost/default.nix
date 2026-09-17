@@ -49,6 +49,7 @@
         openssh.authorizedKeys.keys = [
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDO11F5Mw0JYYi/IgmgfV7bRZS7yDi5y/FSDpM3Ep6Qt openpgp:0xBC69F42C" # ferran
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII2SPPa9ZAtAGTuprKx2vKL+PK1aPm/LPveJXBYNOXUF oriolagobat@lift" # ori
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMwPiy0p4GqkQ8lQpU7WjZ95U7H5xIisuC7Cu/Hgk8wr cardno:25_555_331" # pablo
         ];
       };
       ${user} = {
