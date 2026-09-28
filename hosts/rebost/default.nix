@@ -51,7 +51,9 @@
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDO11F5Mw0JYYi/IgmgfV7bRZS7yDi5y/FSDpM3Ep6Qt openpgp:0xBC69F42C" # ferran
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII2SPPa9ZAtAGTuprKx2vKL+PK1aPm/LPveJXBYNOXUF oriolagobat@lift" # ori
           "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMwPiy0p4GqkQ8lQpU7WjZ95U7H5xIisuC7Cu/Hgk8wr cardno:25_555_331" # pablo
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILtT0z+lLKh5Dx6PIYJUAaQQ/gV/VZrhDw6nmdakz2wo notahuman@elrond" # pablo (borgbackup)
+
+          # Extra key for deploying via CI/CD with opentofu (via pablito2020/nixcfg opentofu deployment, ask him).
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICC1H566vc/DPR+rCXM8ciEf3h1s5+vaEXA2r5NZcaWE bot@opentofu"
         ];
       };
       ${user} = {
