@@ -15,7 +15,7 @@
     experimental-features = nix-command flakes
   '';
 
-  environment.enableAllTerminfo = true;
+  # environment.enableAllTerminfo = true;
 
   networking.hostName = "rebost";
 
