@@ -4,7 +4,6 @@
     inputs.impermanence.nixosModules.impermanence
   ];
 
-  boot.initrd.systemd.enable = true;
   boot.initrd.systemd.services.rollback-root = {
     description = "Archive and recreate the root Btrfs subvolume";
     requiredBy = [ "sysroot.mount" ];
