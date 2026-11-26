@@ -1,36 +1,46 @@
-{ inputs, lib, ... }:
+{ inputs, pkgs, ... }:
 {
   imports = [
     inputs.impermanence.nixosModules.impermanence
   ];
 
-  # Keep the scripted initrd for the current Btrfs rollback hook on NixOS 26.05.
-  boot.initrd.systemd.enable = false;
+  boot.initrd.systemd.enable = true;
+  boot.initrd.systemd.services.rollback-root = {
+    description = "Archive and recreate the root Btrfs subvolume";
+    requiredBy = [ "sysroot.mount" ];
+    requires = [ "dev-root_vg-root.device" ];
+    after = [ "dev-root_vg-root.device" "initrd-root-device.target" "systemd-hibernate-resume.service" ];
+    before = [ "sysroot.mount" ];
+    unitConfig.DefaultDependencies = false;
+    serviceConfig.Type = "oneshot";
+    path = [ pkgs.btrfs-progs pkgs.coreutils pkgs.findutils pkgs.util-linux.mount ];
+    script = ''
+      set -euo pipefail
+      mkdir -p /btrfs_tmp
+      mount -o subvolid=5 /dev/root_vg/root /btrfs_tmp
+      trap 'umount /btrfs_tmp' EXIT
 
-  boot.initrd.postResumeCommands = lib.mkAfter ''
-    mkdir /btrfs_tmp
-    mount /dev/root_vg/root /btrfs_tmp
-    if [[ -e /btrfs_tmp/root ]]; then
-        mkdir -p /btrfs_tmp/old_roots
+      mkdir -p /btrfs_tmp/old_roots
+      if [[ -e /btrfs_tmp/root || -L /btrfs_tmp/root ]]; then
+        btrfs subvolume show /btrfs_tmp/root > /dev/null
         timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-        mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-    fi
-
-    delete_subvolume_recursively() {
-        IFS=$'\n'
-        for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-            delete_subvolume_recursively "/btrfs_tmp/$i"
+        archive="/btrfs_tmp/old_roots/$timestamp"
+        suffix=0
+        while [[ -e "$archive" || -L "$archive" ]]; do
+          suffix=$((suffix + 1))
+          archive="/btrfs_tmp/old_roots/$timestamp-$suffix"
         done
-        btrfs subvolume delete "$1"
-    }
+        mv -T /btrfs_tmp/root "$archive"
+      fi
 
-    for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
-        delete_subvolume_recursively "$i"
-    done
+      find /btrfs_tmp/old_roots -mindepth 1 -maxdepth 1 -type d -mtime +30 \
+        -exec btrfs subvolume delete --recursive -- {} +
 
-    btrfs subvolume create /btrfs_tmp/root
-    umount /btrfs_tmp
-  '';
+      btrfs subvolume create /btrfs_tmp/root
+      umount /btrfs_tmp
+      trap - EXIT
+    '';
+  };
 
   # Issue: https://github.com/nix-community/impermanence/issues/229
   # Can't use bind with machine-id...
